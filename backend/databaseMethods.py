@@ -18,7 +18,8 @@ def get_snapshot(q, site, timestamp):
 	if archive is not None:
 		new_url = archive.get("url")
 		new_text = requests.get(new_url).text
-		snapshot = {"url" : site, "time": timestamp, "content": new_text, "links": [], "tables_num": 0}
+		new_time = archive.get("timestamp")
+		snapshot = {"url" : site, "time": new_time, "content": new_text, "links": [], "tables_num": 0}
 		snapshot_id = db.snapshots.insert(snapshot)
 		q.put(snapshot_id)
 

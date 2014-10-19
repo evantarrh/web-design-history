@@ -9,7 +9,7 @@ app.config["DEBUG"] = True
 def hello():
 	print "hello"
 	db.fillSnapshotDatabase()
-	crawler.addLinks()
+ 	crawler.addLinks()
 	print "hello again"
 	#db.snapshots.find()
 
