@@ -17,4 +17,8 @@ sites = ["google.com",
 "twitter.com",
 "linkedin.com",
 "bing.com",
-"youtube.com"]
+"youtube.com",
+"tumblr.com",
+"flickr.com",
+"github.com",
+"kickstarter.com"]
