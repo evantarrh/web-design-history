@@ -35,7 +35,7 @@ svg.selectAll('rect')
 		}
 		return exampleData[basetime] - (d * 9);
 	}
-	})
+	)
 	.attr('width', w / sleepData.length - 2)
 	.attr('height', function(d) {
 		return d * 9;
