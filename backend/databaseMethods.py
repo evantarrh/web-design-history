@@ -1,14 +1,10 @@
 from pymongo import MongoClient
 import requests
 from websites import sites
-import Queue
-import threading
 from HTMLParser import HTMLParser
 
 client = MongoClient()
 db = client.webdesign
-
-#q = Queue.Queue()
 
 # create a subclass and override the handler methods
 class MyHTMLParser(HTMLParser):
@@ -19,14 +15,12 @@ class MyHTMLParser(HTMLParser):
 
 	def handle_starttag(self, tag, attrs):
 		if tag == "link":
-			#print "found link"
 			for attr in attrs:
-				print (db.snapshots.update({"url": self.url, "time": self.time}, { "$addToSet": {"links" : attr}}))
-				print attr
+				print "found a link: " + str(attr)
+				#db.snapshots.update({"url": self.url, "time": self.time}, { "$addToSet": {"links" : attr}})
 		if tag == "table":
-			#print "found table....lol"
 			for attr in attrs:
-				print (db.snapshots.update({"url": self.url, "time": self.time}, { "$inc": {"tables_num" : 1}}))
+				db.snapshots.update({"url": self.url, "time": self.time}, { "$inc": {"tables_num" : 1}})
 
 
 #def get_snapshot(q, site, timestamp):
@@ -40,35 +34,40 @@ def get_snapshot(site, timestamp):
 		new_url = archive.get("url")
 		new_text = requests.get(new_url).text
 		new_time = archive.get("timestamp")
-		snapshot = {"url" : site, "time": new_time, "links": [], "tables_num": 0}
-		snapshot_id = db.snapshots.insert(snapshot)
-		print "should be getting stats for" + new_url + "at" + new_time + "now"
-		getStats(new_text, site, new_time)
-		#getting rid of queueing/threading
-		#q.put(snapshot_id)
+		#time_str = "{\"time\": \"" + new_time + "\"}"
+		time_dict = {'time': str(new_time)}
+		print time_dict
+		#only add snapshot to db if snapshots doesn't already contain an item with this timestamp
+		#(this is to prevent duplicates)
+		if db.snapshots.find_one(time_dict) is None:
+			snapshot = {"url" : site, "time": new_time, "links": [], "tables_num": 0}
+			snapshot_id = db.snapshots.insert(snapshot)
+			getStats(new_text, site, new_time)
 
 
 def fillSnapshotDatabase():
 
 	for site in sites:
-		timestamp = 20000101
+		timestamp = 20000101000000
 		
-		for x in range(0, 2):
+		for x in range(0, 12):
 			if (x + 1) % 12 == 0:
-				timestamp = timestamp + 10000
+				timestamp = timestamp + 8900000000
 				#that should probably be 8900 because math (i.e., starting over at the next january)
-			else:
-				timestamp = timestamp + 100
+			elif (x + 1) % 3 == 0:
+				timestamp = timestamp + 400000000
 			get_snapshot(site, timestamp)
-
-			#t = threading.Thread(target=get_snapshot, args=(q, site, timestamp))
-			#t.daemon = True
-			#t.start()
-
-	#s = q.get()
 
 
 def getStats(plainHtml, snapshotUrl, snapshotTime):
 	parser = MyHTMLParser(snapshotUrl, snapshotTime)
 	parser.feed(plainHtml)
+
+def tmp():
+	for x in range (0, 10):
+		snap = {"time": 5000}
+		time_str = {"time": 5000}
+		print time_str
+		print db.snapshots.find_one(time_str)
+		db.snapshots.insert(snap)
 

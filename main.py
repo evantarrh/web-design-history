@@ -8,9 +8,8 @@ app.config["DEBUG"] = True
 def hello():
 	print "hello"
 	db.fillSnapshotDatabase()
- 	#crawler.addLinks()
+	#db.tmp()
 	print "hello again"
-	#db.snapshots.find()
 
 	return render_template("index.html")
 
