@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import requests
 from websites import sites
 from HTMLParser import HTMLParser
+from pymongo.son_manipulator import SONManipulator
 
 client = MongoClient()
 db = client.webdesign
@@ -22,6 +23,14 @@ class MyHTMLParser(HTMLParser):
 			for attr in attrs:
 				db.snapshots.update({"url": self.url, "time": self.time}, { "$inc": {"tables_num" : 1}})
 
+"""
+class ObjectIdManipulator(SONManipulator):
+    def transform_incoming(self, son, collection):
+        son['$id'] = str(son['$id'])      
+        return son
+
+db.add_son_manipulator(ObjectIdManipulator())
+"""
 
 #def get_snapshot(q, site, timestamp):
 def get_snapshot(site, timestamp):
@@ -50,13 +59,14 @@ def fillSnapshotDatabase():
 	for site in sites:
 		timestamp = 20000101000000
 		
-		for x in range(0, 12):
+		# range should be (0, 120) for 10 years
+		for x in range(0, 4):
 			if (x + 1) % 12 == 0:
-				timestamp = timestamp + 8900000000
-				#that should probably be 8900 because math (i.e., starting over at the next january)
-			elif (x + 1) % 3 == 0:
+				timestamp = timestamp + 9200000000
+				get_snapshot(site, timestamp)
+			elif (x + 1) % 4 == 0:
 				timestamp = timestamp + 400000000
-			get_snapshot(site, timestamp)
+				get_snapshot(site, timestamp)
 
 
 def getStats(plainHtml, snapshotUrl, snapshotTime):
@@ -70,4 +80,5 @@ def tmp():
 		print time_str
 		print db.snapshots.find_one(time_str)
 		db.snapshots.insert(snap)
+		
 

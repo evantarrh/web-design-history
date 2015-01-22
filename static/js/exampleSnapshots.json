@@ -1,0 +1,23 @@
+[
+ { "url" : "google.com", "tables_num" : 5, "links" : [], "time" : "20000510033852" },
+ { "url" : "yahoo.com", "tables_num" : 58, "links" : [], "time" : "20000428012140" },
+ { "url" : "wikipedia.org", "tables_num" : 2, "links" : [], "time" : "20010727112808" },
+ { "url" : "myspace.com", "tables_num" : 2, "links" : [], "time" : "20000302233809" },
+ { "url" : "wordpress.com", "tables_num" : 25, "links" : [], "time" : "20040723044112" },
+ { "url" : "aol.com", "tables_num" : 95, "links" : [], "time" : "20000508233733" },
+ { "url" : "msn.com", "tables_num" : 219, "links" : [], "time" : "20000510005032" },
+ { "url" : "microsoft.com", "tables_num" : 15, "links" : [], "time" : "20000510032150" },
+ { "url" : "ebay.com", "tables_num" : 82, "links" : [], "time" : "20000510004517" },
+ { "url" : "bing.com", "tables_num" : 0, "links" : [], "time" : "20030726111100" },
+ { "url" : "news.bbc.co.uk", "tables_num" : 40, "links" : [], "time" : "20000510061712" },
+ { "url" : "cnn.com", "tables_num" : 199, "links" : [], "time" : "20000815052826" },
+ { "url" : "bbc.com", "tables_num" : 2, "links" : [], "time" : "20000510164859" },
+ { "url" : "nbcnews.com", "tables_num" : 2, "links" : [], "time" : "20000302163532" },
+ { "url" : "nytimes.com", "tables_num" : 79, "links" : [], "time" : "20001109144000" },
+ { "url" : "twitter.com", "tables_num" : 0, "links" : [], "time" : "20010302103333" },
+ { "url" : "youtube.com", "tables_num" : 45, "links" : [], "time" : "20050428014715" },
+ { "url" : "tumblr.com", "tables_num" : 2, "links" : [], "time" : "20070105095540" },
+ { "url" : "flickr.com", "tables_num" : 17, "links" : [], "time" : "20040226214842" },
+ { "url" : "github.com", "tables_num" : 2, "links" : [], "time" : "20080514210148" },
+ { "url" : "kickstarter.com", "tables_num" : 14, "links" : [], "time" : "20060111203248" }
+]

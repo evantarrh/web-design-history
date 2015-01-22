@@ -6,10 +6,8 @@ app.config["DEBUG"] = True
 
 @app.route('/')
 def hello():
-	print "hello"
-	db.fillSnapshotDatabase()
+	#db.fillSnapshotDatabase()
 	#db.tmp()
-	print "hello again"
 
 	return render_template("index.html")
 
