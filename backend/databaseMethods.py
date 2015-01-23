@@ -2,7 +2,6 @@ from pymongo import MongoClient
 import requests
 from websites import sites
 from HTMLParser import HTMLParser
-from pymongo.son_manipulator import SONManipulator
 
 client = MongoClient()
 db = client.webdesign
@@ -23,16 +22,6 @@ class MyHTMLParser(HTMLParser):
 			for attr in attrs:
 				db.snapshots.update({"url": self.url, "time": self.time}, { "$inc": {"tables_num" : 1}})
 
-"""
-class ObjectIdManipulator(SONManipulator):
-    def transform_incoming(self, son, collection):
-        son['$id'] = str(son['$id'])      
-        return son
-
-db.add_son_manipulator(ObjectIdManipulator())
-"""
-
-#def get_snapshot(q, site, timestamp):
 def get_snapshot(site, timestamp):
 	resp = requests.get('https://archive.org/wayback/available?url=' + site + '&timestamp=' + str(timestamp))
 	
@@ -61,7 +50,7 @@ def fillSnapshotDatabase():
 		start_date = 20000101000000
 		
 		# The number of months after the start date to analyze, e.g. (0, 120) for 10 years
-		for x in range(0, 4):
+		for x in range(0, 168):
 			if (x + 1) % 12 == 0:
 				start_date = start_date + 9200000000
 				get_snapshot(site, start_date)
