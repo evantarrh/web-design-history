@@ -14,9 +14,8 @@ In order to run this, you'll need [MongoDB](http://mongodb.com) and [d3](http://
   * To change the timeframe, edit the `start_date` in `databaseMethods.py`.
 
 ### Exporting the database
-```shell
+```
 mongoexport --db webdesign --collection snapshots --csv --fields tables_num,time,url --out newdata.csv
 ```
-Currently, you have to edit the JSON manually in order to format it. Insert `[` at the beginning and `]` at the end, and separate each item with a comma.
 
 After this, you'll be good to go. Have fun!
