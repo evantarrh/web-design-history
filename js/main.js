@@ -3,4 +3,4 @@ function doSomethingWithData(jsondata) {
 }
 
 
-d3.json('static/js/example3.json', doSomethingWithData);
+d3.json('js/exampleSnapshots.json', doSomethingWithData);

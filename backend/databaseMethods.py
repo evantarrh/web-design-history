@@ -57,16 +57,18 @@ def get_snapshot(site, timestamp):
 def fillSnapshotDatabase():
 
 	for site in sites:
-		timestamp = 20000101000000
+		# The starting date (January 1st, 2000 at 00:00:00).
+		start_date = 20000101000000
 		
-		# range should be (0, 120) for 10 years
+		# The number of months after the start date to analyze, e.g. (0, 120) for 10 years
 		for x in range(0, 4):
 			if (x + 1) % 12 == 0:
-				timestamp = timestamp + 9200000000
-				get_snapshot(site, timestamp)
+				start_date = start_date + 9200000000
+				get_snapshot(site, start_date)
+			# (x + 1) % 4 looks for three snapshots a year
 			elif (x + 1) % 4 == 0:
-				timestamp = timestamp + 400000000
-				get_snapshot(site, timestamp)
+				start_date = start_date + 400000000
+				get_snapshot(site, start_date)
 
 
 def getStats(plainHtml, snapshotUrl, snapshotTime):
