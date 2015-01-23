@@ -15,7 +15,7 @@ In order to run this, you'll need [MongoDB](http://mongodb.com) and [d3](http://
 
 ### Exporting the database
 ```shell
-mongoexport --db webdesign --collection snapshots --out newData.json
+mongoexport --db webdesign --collection snapshots --csv --fields tables_num,time,url --out newdata.csv
 ```
 Currently, you have to edit the JSON manually in order to format it. Insert `[` at the beginning and `]` at the end, and separate each item with a comma.
 
