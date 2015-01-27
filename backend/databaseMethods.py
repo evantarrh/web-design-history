@@ -14,12 +14,13 @@ class MyHTMLParser(HTMLParser):
 		self.time = time
 
 	def handle_starttag(self, tag, attrs):
-		if tag == "link":
+		if tag == "h1":
 			for attr in attrs:
 				print "found a link: " + str(attr)
 				#db.snapshots.update({"url": self.url, "time": self.time}, { "$addToSet": {"links" : attr}})
 		if tag == "table":
 			for attr in attrs:
+				print str(attr)
 				db.snapshots.update({"url": self.url, "time": self.time}, { "$inc": {"tables_num" : 1}})
 
 def get_snapshot(site, timestamp):
@@ -32,9 +33,7 @@ def get_snapshot(site, timestamp):
 		new_url = archive.get("url")
 		new_text = requests.get(new_url).text
 		new_time = archive.get("timestamp")
-		#time_str = "{\"time\": \"" + new_time + "\"}"
-		time_dict = {'time': str(new_time)}
-		print time_dict
+
 		#only add snapshot to db if snapshots doesn't already contain an item with this timestamp
 		#(this is to prevent duplicates)
 		if db.snapshots.find_one(time_dict) is None:
@@ -65,11 +64,5 @@ def getStats(plainHtml, snapshotUrl, snapshotTime):
 	parser.feed(plainHtml)
 
 def tmp():
-	for x in range (0, 10):
-		snap = {"time": 5000}
-		time_str = {"time": 5000}
-		print time_str
-		print db.snapshots.find_one(time_str)
-		db.snapshots.insert(snap)
-		
+	get_snapshot("nbcnews.com", 20040327155606)	
 
