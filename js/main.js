@@ -8,13 +8,7 @@ var hortScale;
 var vertScale;
 
 var arrays;
-
-var tooltip = d3.select("body")
-    .append("div")
-    .style("position", "absolute")
-    .style("z-index", "10")
-    .style("visibility", "hidden")
-    .text("a simple tooltip");
+var tooltip;
 
 var line = d3.svg.line()
     .x(function(d) { if (undefined != d) {return hortScale(d.date); }})
@@ -42,6 +36,14 @@ d3.csv("newdata.csv", function(d) {
     	.attr("width", w)
 	.attr("height", h);
     dataset = data;
+
+    tooltip = d3.select("body")
+	.append("div")
+	.style("position", "absolute")
+	.style("z-index", "10")
+	.style("visibility", "visible")
+	.text("a simple tooltip");
+
     hortScale = d3.time.scale()
 			.domain([new Date(2000, 0, 1), d3.max(dataset, function(d) { return d.time; })])
 			.range([padding, w - padding * 2]);
@@ -69,8 +71,9 @@ function makeCircles() {
 	})
 	.attr("r", 2)
 	.attr("fill", "rgba(170,150,150,0.5)")
-	.on("mouseover", function() {
-	    return tooltip.style("visibility", "visible");
+	.on("mouseover", function(d) {
+	    return tooltip.style("visibility", "visible")
+			.text(d.url + ", " + d.tables_num);
 	})
 	.on("mousemove", function(){
 	    return tooltip.style("top", (d3.event.pageY - 10) + "px")
