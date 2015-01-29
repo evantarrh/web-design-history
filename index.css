@@ -9,3 +9,16 @@
     font-family: "Source Sans Pro", sans-serif;
     font-size: 12px;
 }
+
+.info {
+    position: absolute;
+    text-align: center;
+    width: 60px;
+    height: 28px;
+    padding: 2px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 14px;
+    background-color: #bde;
+    border: 0px;
+    border-radius: 8px;
+}

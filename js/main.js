@@ -1,3 +1,4 @@
+var NUM_SITES = 21;
 var dataset;
 var svg;
 var w = window.innerWidth;
@@ -5,6 +6,20 @@ var h = window.innerHeight;
 var padding = 30;
 var hortScale;
 var vertScale;
+
+var arrays;
+
+var tooltip = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .text("a simple tooltip");
+
+var line = d3.svg.line()
+    .x(function(d) { if (undefined != d) {return hortScale(d.date); }})
+    .y(function(d) { if (undefined != d) {return vertScale(d.tables_num); }})
+    .interpolate("linear");
 
 d3.csv("newdata.csv", function(d) {
     return {
@@ -17,23 +32,27 @@ d3.csv("newdata.csv", function(d) {
     if (error) {
 	console.log(error);
     } else {
-	console.log(data);
 
-	svg = d3.select("body")
-	    .append("svg")
-    	    .attr("width", w)
-	    .attr("height", h);
-	dataset = data;
-	hortScale = d3.time.scale()
+    arrays = new Array(NUM_SITES);
+    for (var i = 0; i < NUM_SITES; i++) {
+    	arrays[i] = new Array();
+    }
+    svg = d3.select("body")
+	.append("svg")
+    	.attr("width", w)
+	.attr("height", h);
+    dataset = data;
+    hortScale = d3.time.scale()
 			.domain([new Date(2000, 0, 1), d3.max(dataset, function(d) { return d.time; })])
 			.range([padding, w - padding * 2]);
-	vertScale = d3.scale.linear()
+    vertScale = d3.scale.linear()
 			.domain([0, d3.max(dataset, function(d) { return d.tables_num;})])
 			.range([h - padding, padding]);
 
-	makeCircles();
-	makeAxes();
-	//makeLabels();
+    makeCircles();
+    makeAxes();
+    getUrlCollections();
+    makeLines();
     }
 });
 
@@ -49,7 +68,17 @@ function makeCircles() {
 	    return vertScale(d.tables_num);
 	})
 	.attr("r", 2)
-	.attr("fill", "rgba(170,150,150,0.5)");
+	.attr("fill", "rgba(170,150,150,0.5)")
+	.on("mouseover", function() {
+	    return tooltip.style("visibility", "visible");
+	})
+	.on("mousemove", function(){
+	    return tooltip.style("top", (d3.event.pageY - 10) + "px")
+			.style("left", (d3.event.pageX + 10) + "px");
+	})
+	.on("mouseout", function(){
+	    return tooltip.style("visibility", "hidden");
+	});
 }
 
 function makeAxes() {
@@ -71,6 +100,34 @@ function makeAxes() {
 	.attr("transform", "translate(" + padding + ",0)")
 	.call(yAxis);
 }
+
+function getUrlCollections(){
+    var urlName = dataset[0].url;
+    var urlCount = 0;
+    var snapshotCount = 0;
+    for (var j = 0; j < dataset.length; j++) {
+	if (dataset[j].url === urlName) {
+	    arrays[urlCount][snapshotCount++] = dataset[j];
+	}
+	else {
+	    urlName = dataset[j].url;
+	    urlCount++;
+	    snapshotCount = 0;
+	}
+    }
+}
+
+function makeLines(){
+    for (var i = 0; i < NUM_SITES; i++) {
+	svg.append("path")
+	    .datum("d", line(arrays))
+	    .attr("class", "line")
+	    .attr("stroke-width", 1)
+	    .attr("stroke", "#999")
+	    .attr("fill", "none");
+    }
+}
+
 
 function makeLabels() {
     svg.selectAll("circle").on("mouseover", function() {
