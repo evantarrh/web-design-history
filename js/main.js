@@ -9,11 +9,7 @@ var vertScale;
 
 var arrays;
 var tooltip;
-
-var line = d3.svg.line()
-    .x(function(d) { if (undefined != d) {return hortScale(d.date); }})
-    .y(function(d) { if (undefined != d) {return vertScale(d.tables_num); }})
-    .interpolate("linear");
+var line;
 
 d3.csv("newdata.csv", function(d) {
     return {
@@ -51,7 +47,13 @@ d3.csv("newdata.csv", function(d) {
 			.domain([0, d3.max(dataset, function(d) { return d.tables_num;})])
 			.range([h - padding, padding]);
 
+    line = d3.svg.line()
+	.x(function(d, index) { return hortScale(d[index].date); })
+	.y(function(d, index) { return vertScale(d[index].tables_num); })
+	.interpolate("linear");
+
     makeCircles();
+
     makeAxes();
     getUrlCollections();
     makeLines();
@@ -114,8 +116,8 @@ function getUrlCollections(){
 	}
 	else {
 	    urlName = dataset[j].url;
-	    urlCount++;
-	    snapshotCount = 0;
+	    arrays[++urlCount][0] = dataset[j];
+	    snapshotCount = 1;
 	}
     }
 }
@@ -123,10 +125,23 @@ function getUrlCollections(){
 function makeLines(){
     for (var i = 0; i < NUM_SITES; i++) {
 	svg.append("path")
-	    .datum("d", line(arrays))
+	    .datum(arrays[i])
+	    .attr("d", function(d) {
+		    console.log(d);
+		    var arrLen = d.length;
+		    var j = 0;
+		    var pathData = "M";
+		    for (var j = 0; j < arrLen; j++) {
+			if (j !== 0) {
+			    pathData += "L";
+			}
+			pathData += " " + hortScale(d[j].time) + " " + vertScale(d[j].tables_num);
+		    }
+		    return pathData;
+	    })
 	    .attr("class", "line")
-	    .attr("stroke-width", 1)
-	    .attr("stroke", "#999")
+	    .attr("stroke-width", 2)
+	    .attr("stroke", "rgba(200,200,200,0.5)")
 	    .attr("fill", "none");
     }
 }
