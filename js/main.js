@@ -9,11 +9,11 @@ var vertScale;
 
 var arrays;
 var tooltip;
-var line;
 
 d3.csv("newdata.csv", function(d) {
+    var strArray = d.url.split(".");
     return {
-    	url: d.url,
+        url: strArray[0],
    	time: new Date(parseInt(d.time.substring(0, 4)), parseInt(d.time.substring(4, 6)),
 	    d.time.substring(6, 8)),
     	tables_num: parseInt(d.tables_num)
@@ -47,11 +47,6 @@ d3.csv("newdata.csv", function(d) {
 			.domain([0, d3.max(dataset, function(d) { return d.tables_num;})])
 			.range([h - padding, padding]);
 
-    line = d3.svg.line()
-	.x(function(d, index) { return hortScale(d[index].date); })
-	.y(function(d, index) { return vertScale(d[index].tables_num); })
-	.interpolate("linear");
-
     makeCircles();
 
     makeAxes();
@@ -60,30 +55,20 @@ d3.csv("newdata.csv", function(d) {
     }
 });
 
-function makeCircles() {
-    var dataPoints = svg.selectAll("circle")
-	.data(dataset)
-	.enter()
-	.append("circle")
-	.attr("cx", function(d) {
-	    return hortScale(d.time);	
-	})
-	.attr("cy", function(d) {
-	    return vertScale(d.tables_num);
-	})
-	.attr("r", 2)
-	.attr("fill", "rgba(170,150,150,0.5)")
-	.on("mouseover", function(d) {
-	    return tooltip.style("visibility", "visible")
-			.text(d.url + ", " + d.tables_num);
-	})
-	.on("mousemove", function(){
-	    return tooltip.style("top", (d3.event.pageY - 10) + "px")
-			.style("left", (d3.event.pageX + 10) + "px");
-	})
-	.on("mouseout", function(){
-	    return tooltip.style("visibility", "hidden");
-	});
+function getUrlCollections(){
+    var urlName = dataset[0].url;
+    var urlCount = 0;
+    var snapshotCount = 0;
+    for (var j = 0; j < dataset.length; j++) {
+	if (dataset[j].url === urlName) {
+	    arrays[urlCount][snapshotCount++] = dataset[j];
+	}
+	else {
+	    urlName = dataset[j].url;
+	    arrays[++urlCount][0] = dataset[j];
+	    snapshotCount = 1;
+	}
+    }
 }
 
 function makeAxes() {
@@ -106,20 +91,34 @@ function makeAxes() {
 	.call(yAxis);
 }
 
-function getUrlCollections(){
-    var urlName = dataset[0].url;
-    var urlCount = 0;
-    var snapshotCount = 0;
-    for (var j = 0; j < dataset.length; j++) {
-	if (dataset[j].url === urlName) {
-	    arrays[urlCount][snapshotCount++] = dataset[j];
-	}
-	else {
-	    urlName = dataset[j].url;
-	    arrays[++urlCount][0] = dataset[j];
-	    snapshotCount = 1;
-	}
-    }
+function makeCircles() {
+    var dataPoints = svg.selectAll("circle")
+	.data(dataset)
+	.enter()
+	.append("circle")
+	.attr("cx", function(d) {
+	    return hortScale(d.time);	
+	})
+	.attr("cy", function(d) {
+	    return vertScale(d.tables_num);
+	})
+	.attr("r", 2)
+	.attr("fill", "rgba(170,150,150,0.5)")
+	.attr("class", function(d) {
+	    return "tables " + d.url;
+	})
+	.attr("visibility", "hidden")
+	.on("mouseover", function(d) {
+	    return tooltip.style("visibility", "visible")
+			.text(d.url + ", " + d.tables_num);
+	})
+	.on("mousemove", function(){
+	    return tooltip.style("top", (d3.event.pageY - 10) + "px")
+			.style("left", (d3.event.pageX + 10) + "px");
+	})
+	.on("mouseout", function(){
+	    return tooltip.style("visibility", "hidden");
+	});
 }
 
 function makeLines(){
@@ -142,30 +141,13 @@ function makeLines(){
 	    .attr("class", "line")
 	    .attr("stroke-width", 2)
 	    .attr("stroke", "rgba(200,200,200,0.5)")
-	    .attr("fill", "none");
+	    .attr("fill", "none")
+	    .on("mouseover", function(d) {
+		return d3.selectAll("." + d[0].url).attr("visibility", "visibile");
+	    })
+	    .on("mouseout", function(d) {
+		return d3.selectAll("." + d[0].url).attr("visibility", "hidden");
+	    });
     }
 }
 
-
-function makeLabels() {
-    svg.selectAll("circle").on("mouseover", function() {
-	svg.selectAll("text")
-	    .data(dataset)
-	    .enter()
-	    .append("text")
-	    .text(function(d) {
-	        return d.url + ", " + d.tables_num;
-	    })
-	    .attr("x", function(d) {
-	        var x = parseInt(d.time.substring(4, 6)); // starts with just month
-	        x += parseInt(d.time.substring(2, 4)) * 12; // adds years by converting them to months
-	        return hortScale(x);
-	    })
-	    .attr("y", function(d) {
-	        return h - vertScale(parseInt(d.tables_num));
-	    })
-	    .attr("font-family", "Source Sans Pro")
-	    .attr("font-size", "11px")
-	    .attr("fill", "#eee");
-	});
-}
